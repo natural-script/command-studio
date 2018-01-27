@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Jste Command Builder</title>
+<script src="JS/blockly_compressed.js"></script>
+<script src="JS/javascript.js"></script>
+<script src="JS/generator.js"></script>
+<script src="JS/Translations/en.js"></script>
+<script src="JS/blocks.js"></script>
+<script>
+'use strict';
+var workspace = null;
+var fakeDragStack = [];
+
+function start() {
+  setBackgroundColor();
+
+  // Parse the URL arguments.
+
+  // Create main workspace.
+  /* TODO: Change toolbox XML ID if necessary. Can export toolbox XML from Workspace Factory. */
+var toolbox = document.getElementById("toolbox");
+
+var options = { 
+	toolbox : toolbox, 
+	collapse : true, 
+	comments : true, 
+	disable : true, 
+	maxBlocks : Infinity, 
+	trashcan : true, 
+	horizontalLayout : false, 
+	toolboxPosition : 'start', 
+	css : true, 
+	media : 'https://blockly-demo.appspot.com/static/media/', 
+	rtl : false, 
+	scrollbars : true, 
+	sounds : true, 
+	oneBasedIndex : true, 
+	grid : {
+		spacing : 20, 
+		length : 1, 
+		colour : '#888', 
+		snap : false
+	}, 
+	zoom : {
+		controls : true, 
+		wheel : true, 
+		startScale : 1, 
+		maxScale : 3, 
+		minScale : 0.3, 
+		scaleSpeed : 1.2
+	}
+};
+
+/* Inject your workspace */ 
+workspace = Blockly.inject('blocklyDiv', options);
+
+/* Load Workspace Blocks from XML to workspace. Remove all code below if no blocks to load */
+
+/* TODO: Change workspace blocks XML ID if necessary. Can export workspace blocks XML from Workspace Factory. */
+var workspaceBlocks = document.getElementById("workspaceBlocks"); 
+
+/* Load blocks to workspace. */
+Blockly.Xml.domToWorkspace(workspace, workspaceBlocks);
+  // Restore previously displayed text.
+  if (sessionStorage) {
+    var text = sessionStorage.getItem('textarea');
+    if (text) {
+      document.getElementById('importExport').value = text;
+    }
+  taChange();
+}
+}
+function setBackgroundColor() {
+  var lilac = '#d6d6ff';
+
+  var currentPage = window.location.href;
+  var regexFile = /^file[\S]*$/;
+
+  if (regexFile.test(currentPage)) {
+    document.getElementsByTagName('body')[0].style.backgroundColor = lilac;
+  }
+}
+
+function getToolboxElement() {
+  var match = location.search.match(/toolbox=([^&]+)/);
+  return document.getElementById('toolbox-' + (match ? match[1] : 'categories'));
+}
+
+function toXml() {
+  var output = document.getElementById('importExport');
+
+  var xml = Blockly.Xml.workspaceToDom(workspace);
+console.log(xml);
+  output.value = Blockly.Xml.domToPrettyText(xml);
+  output.focus();
+  output.select();
+  taChange();
+}
+
+function fromXml() {
+  var input = document.getElementById('importExport');
+  var xml = Blockly.Xml.textToDom(input.value);
+  Blockly.Xml.domToWorkspace(xml, workspace);
+  taChange();
+}
+
+function toCode(lang) {
+  var output = document.getElementById('importExport');
+  output.value = Blockly[lang].workspaceToCode(workspace);
+  taChange();
+}
+
+// Disable the "Import from XML" button if the XML is invalid.
+// Preserve text between page reloads.
+function taChange() {
+  var textarea = document.getElementById('importExport');
+  if (sessionStorage) {
+    sessionStorage.setItem('textarea', textarea.value);
+  }
+  var valid = true;
+  try {
+    Blockly.Xml.textToDom(textarea.value);
+  } catch (e) {
+    valid = false;
+  }
+  document.getElementById('import').disabled = !valid;
+}
+</script>
+
+<style>
+html, body {
+  height: 100%;
+}
+body {
+  background-color: #fff;
+  font-family: sans-serif;
+  overflow: hidden;
+}
+h1 {
+  font-weight: normal;
+  font-size: 140%;
+}
+#blocklyDiv {
+  float: right;
+  height: 95%;
+  width: 70%;
+}
+#importExport {
+  font-family: monospace;
+}
+
+.ioLabel>.blocklyFlyoutLabelText {
+  font-style: italic;
+}
+
+</style>
+</head>
+<body onload="start()">
+
+  <div id="blocklyDiv"></div>
+
+  <h1>Jste Command Builder</h1>
+
+    <input type="button" value="Export to XML" onclick="toXml()">
+    &nbsp;
+    <input type="button" value="Import from XML" onclick="fromXml()" id="import">
+    <br>
+    <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
+    <br>
+    <textarea id="importExport" style="width: 26%; height: 12em"
+      onchange="taChange();" onkeyup="taChange()"></textarea>
+  </p>
+
+<xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+  <block type="text">
+    <field name="TEXT"></field>
+  </block>
+  <block type="command">
+    <field name="command_id">c0</field>
+    <field name="Language">en</field>
+  </block>
+  <block type="alternatives">
+    <mutation items="3"></mutation>
+  </block>
+  <block type="variable">
+    <field name="variable"></field>
+  </block>
+  <block type="dynamic_data">
+    <field name="grouped">FALSE</field>
+  </block>
+</xml>
+</body>
+</html>
