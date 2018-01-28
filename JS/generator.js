@@ -31,6 +31,12 @@ var uniqueid = function () {
   return '_' + Math.random().toString(36).substr(2, 9);
 };
 
+Blockly.JavaScript['self_reference'] = function(block) {
+  var text_reference = block.getFieldValue('reference');
+  var text_value = block.getFieldValue('value');
+  var code = '((((<<<<' + text_value + ' ==> ' + text_reference + '>>>>))))';
+  return [code, Blockly.JavaScript.ORDER_NONE];
+};
 Blockly.JavaScript['alternatives'] = function(block) {
 	// Create a list with any number of elements of any type.
 	var elements = new Array(block.itemCount_);
@@ -57,7 +63,7 @@ Blockly.JavaScript['command'] = function(block) {
 	var msg = ['+'];
 	var reply = ['- command_id: ' + text_command_id];
 	var star_increment = 1;
-	var contents_array = value_contents.split(/(\(\(\(\<\<\<.*?\>\>\>\)\)\)|LOOP\[\[\[.*?\]\]\])/gmy);
+	var contents_array = value_contents.split(/(\(\(\(\(\<\<\<\<.*?\>\>\>\>\)\)\)\)|\(\(\(\<\<\<.*?\>\>\>\)\)\)|LOOP\[\[\[.*?\]\]\])/gmy);
 	for (var i = 0; i < contents_array.length; i++) {
 		if (/LOOP\[\[\[.*?\]\]\]/.test(contents_array[i])) {
 var loopStar = star_increment++;
@@ -87,6 +93,10 @@ if (loop_data_array[j].trim().length > 0) {
 			msg.push('[*])');
 			star_increment++
 			reply.push(/ID\(\(\(\<\<\<(.*?)\>\>\>\)\)\)/.exec(contents_array[i])[1] + ': ' + 'IS_GROUPED: ' + /IS_GROUPED\(\(\(\<\<\<(.*?)\>\>\>\)\)\)/.exec(contents_array[i])[1] + ' SEPARATOR: ' + /SEPARATOR\(\(\(\<\<\<(.*?)\>\>\>\)\)\)/.exec(contents_array[i])[1] + ' REGEX: ' + loop_regex_array.join(' ') + ' ELEMENTS: [' + loop_elements_array.join(', ') + ']' + ' DATA: <star' + loopStar + '>');
+		} else if (/\(\(\(\(\<\<\<\<.*?\>\>\>\>\)\)\)\)/.test(contents_array[i])) {
+var self_reference_array = /\(\(\(\(\<\<\<\<(.*?)\>\>\>\>\)\)\)\)/.exec(contents_array[i])[1].split(' ==> ');
+			msg.push(self_reference_array[0]);
+			reply.push(self_reference_array[1] + ': ' + 'itself');
 		} else if (/\(\(\(\<\<\<.*?\>\>\>\)\)\)/.test(contents_array[i])) {
 			msg.push('*');
 			reply.push(/\(\(\(\<\<\<(.*?)\>\>\>\)\)\)/.exec(contents_array[i])[1] + ': ' + '<star' + star_increment++ + '>');

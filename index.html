@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <title>Jste Command Builder</title>
+<script src="JS/jquery-3.2.1.min.js"></script>
+<script src="JS/jquery-migrate-3.0.0.min.js"></script>
 <script src="JS/blockly_compressed.js"></script>
 <script src="JS/javascript.js"></script>
 <script src="JS/generator.js"></script>
@@ -108,7 +110,13 @@ function fromXml() {
 
 function toCode(lang) {
   var output = document.getElementById('importExport');
-  output.value = Blockly[lang].workspaceToCode(workspace);
+  var generatedCode = Blockly[lang].workspaceToCode(workspace);
+  output.value = generatedCode;
+  $.ajax({
+  type: 'POST',
+  url: 'https://jste-manager.herokuapp.com/submitCommand',
+  data: {command: generatedCode}
+});
   taChange();
 }
 
@@ -167,7 +175,7 @@ h1 {
     &nbsp;
     <input type="button" value="Import from XML" onclick="fromXml()" id="import">
     <br>
-    <input type="button" value="To JavaScript" onclick="toCode('JavaScript')">
+    <input type="button" value="Submit" onclick="toCode('JavaScript')">
     <br>
     <textarea id="importExport" style="width: 26%; height: 12em"
       onchange="taChange();" onkeyup="taChange()"></textarea>
@@ -186,6 +194,10 @@ h1 {
   </block>
   <block type="variable">
     <field name="variable"></field>
+  </block>
+  <block type="self_reference">
+    <field name="reference"></field>
+    <field name="value"></field>
   </block>
   <block type="dynamic_data">
     <field name="grouped">FALSE</field>
