@@ -21,21 +21,18 @@
  * @fileoverview Generating JavaScript for list blocks.
  * @author fraser@google.com (Neil Fraser)
  */
-
 'use strict';
 goog.provide('Blockly.JavaScript.lists');
 goog.provide('Blockly.JavaScript.texts');
 goog.require('Blockly.JavaScript');
-
-var uniqueid = function () {
-  return '_' + Math.random().toString(36).substr(2, 9);
+var uniqueid = function() {
+	return '_' + Math.random().toString(36).substr(2, 9);
 };
-
 Blockly.JavaScript['self_reference'] = function(block) {
-  var text_reference = block.getFieldValue('reference');
-  var text_value = block.getFieldValue('value');
-  var code = '((((<<<<' + text_value + ' ==> ' + text_reference + '>>>>))))';
-  return [code, Blockly.JavaScript.ORDER_NONE];
+	var text_reference = block.getFieldValue('reference');
+	var text_value = block.getFieldValue('value');
+	var code = '((((<<<<' + text_value + ' ==> ' + text_reference + '>>>>))))';
+	return [code, Blockly.JavaScript.ORDER_NONE];
 };
 Blockly.JavaScript['alternatives'] = function(block) {
 	// Create a list with any number of elements of any type.
@@ -66,44 +63,46 @@ Blockly.JavaScript['command'] = function(block) {
 	var contents_array = value_contents.split(/(\(\(\(\(\<\<\<\<.*?\>\>\>\>\)\)\)\)|\(\(\(\<\<\<.*?\>\>\>\)\)\)|LOOP\[\[\[.*?\]\]\])/gmy);
 	for (var i = 0; i < contents_array.length; i++) {
 		if (/LOOP\[\[\[.*?\]\]\]/.test(contents_array[i])) {
-var loopStar = star_increment++;
+			var loopStar = star_increment++;
 			var loop_data = /DATA\(\(\(\<\<\<(.*?)\>\>\>\)\)\)\]\]\]/.exec(contents_array[i])[1];
 			var loop_data_array = loop_data.split(/(\(\(\(\<\<\<.*?\>\>\>\)\)\))/gmy);
 			var loop_regex_array = [];
 			var loop_elements_array = [];
-var loop_prefix;
 			for (var j = 0; j < loop_data_array.length; j++) {
-if (j == 0) {
-loop_prefix = '(';
-} else {
-loop_prefix = '';
-}
 				if (/\(\(\(\<\<\<.*?\>\>\>\)\)\)/.test(loop_data_array[j])) {
-					msg.push(loop_prefix + '*');
+					if (j == 1) {
+						msg.push('(*');
+					} else {
+						msg.push('*');
+					}
 					loop_elements_array.push('"' + /\(\(\(\<\<\<(.*?)\>\>\>\)\)\)/.exec(loop_data_array[j])[1] + '"');
 					loop_regex_array.push('(.*?)');
 					star_increment++
 				} else {
-if (loop_data_array[j].trim().length > 0) {
-					msg.push(loop_prefix + loop_data_array[j].trim());
-					loop_regex_array.push(loop_data_array[j].trim());
-}
+					if (loop_data_array[j].trim().length > 0) {
+						if (j == 0) {
+							msg.push('(' + loop_data_array[j].trim());
+						} else {
+							msg.push(loop_data_array[j].trim());
+						}
+						loop_regex_array.push(loop_data_array[j].trim());
+					}
 				}
 			}
 			msg.push('[*])');
 			star_increment++
 			reply.push(/ID\(\(\(\<\<\<(.*?)\>\>\>\)\)\)/.exec(contents_array[i])[1] + ': ' + 'IS_GROUPED: ' + /IS_GROUPED\(\(\(\<\<\<(.*?)\>\>\>\)\)\)/.exec(contents_array[i])[1] + ' SEPARATOR: ' + /SEPARATOR\(\(\(\<\<\<(.*?)\>\>\>\)\)\)/.exec(contents_array[i])[1] + ' REGEX: ' + loop_regex_array.join(' ') + ' ELEMENTS: [' + loop_elements_array.join(', ') + ']' + ' DATA: <star' + loopStar + '>');
 		} else if (/\(\(\(\(\<\<\<\<.*?\>\>\>\>\)\)\)\)/.test(contents_array[i])) {
-var self_reference_array = /\(\(\(\(\<\<\<\<(.*?)\>\>\>\>\)\)\)\)/.exec(contents_array[i])[1].split(' ==> ');
+			var self_reference_array = /\(\(\(\(\<\<\<\<(.*?)\>\>\>\>\)\)\)\)/.exec(contents_array[i])[1].split(' ==> ');
 			msg.push(self_reference_array[0]);
 			reply.push(self_reference_array[1] + ': ' + 'itself');
 		} else if (/\(\(\(\<\<\<.*?\>\>\>\)\)\)/.test(contents_array[i])) {
 			msg.push('*');
 			reply.push(/\(\(\(\<\<\<(.*?)\>\>\>\)\)\)/.exec(contents_array[i])[1] + ': ' + '<star' + star_increment++ + '>');
 		} else {
-if (contents_array[i].trim().length > 0) {
-			msg.push(contents_array[i].trim());
-}
+			if (contents_array[i].trim().length > 0) {
+				msg.push(contents_array[i].trim());
+			}
 		}
 	}
 	// TODO: Assemble JavaScript into code variable.
