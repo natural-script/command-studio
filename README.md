@@ -1,2 +1,2 @@
-# command-builder
-The official Jste Command Builder
+# Jste Command Studio
+The official Jste Command Studio

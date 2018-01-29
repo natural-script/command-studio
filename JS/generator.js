@@ -58,7 +58,7 @@ Blockly.JavaScript['command'] = function(block) {
 	}
 	var value_contents = elements.join(' ');
 	var msg = ['+'];
-	var reply = ['- command_id: ' + text_command_id];
+	var reply = ['- command_id: ' + text_command_id + ' ==> lang: ' + dropdown_language];
 	var star_increment = 1;
 	var contents_array = value_contents.split(/(\(\(\(\(\<\<\<\<.*?\>\>\>\>\)\)\)\)|\(\(\(\<\<\<.*?\>\>\>\)\)\)|LOOP\[\[\[.*?\]\]\])/gmy);
 	for (var i = 0; i < contents_array.length; i++) {
