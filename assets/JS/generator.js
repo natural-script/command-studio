@@ -25,30 +25,36 @@
 goog.provide('Blockly.JavaScript.lists');
 goog.provide('Blockly.JavaScript.texts');
 goog.require('Blockly.JavaScript');
-var uniqueid = function() {
+var uniqueid = function () {
 	return '_' + Math.random().toString(36).substr(2, 9);
 };
-Blockly.JavaScript['self_reference'] = function(block) {
+Blockly.JavaScript['self_reference'] = function (block) {
 	var text_reference = block.getFieldValue('reference');
 	var text_value = block.getFieldValue('value');
 	var code = '((((<<<<' + text_value + ' ==> ' + text_reference + '>>>>))))';
 	return [code, Blockly.JavaScript.ORDER_NONE];
 };
-Blockly.JavaScript['alternatives'] = function(block) {
+Blockly.JavaScript['alternatives'] = function (block) {
 	// Create a list with any number of elements of any type.
+	var checkbox_optional = block.getFieldValue('optional') == 'TRUE';
 	var elements = new Array(block.itemCount_);
 	for (var i = 0; i < block.itemCount_; i++) {
 		elements[i] = Blockly.JavaScript.valueToCode(block, 'ADD' + i, Blockly.JavaScript.ORDER_NONE) || 'null';
 	}
-	var code = '(?:' + elements.join('|') + ')';
+	var code;
+	if (checkbox_optional) {
+		code = '[' + elements.join('|') + ']';
+	} else {
+		code = '(?:' + elements.join('|') + ')';
+	}
 	return [code, Blockly.JavaScript.ORDER_NONE];
 };
-Blockly.JavaScript['text'] = function(block) {
+Blockly.JavaScript['text'] = function (block) {
 	// Text value.
 	var code = block.getFieldValue('TEXT').replace(/'(.*)'/g, '$1');
 	return [code, Blockly.JavaScript.ORDER_NONE];
 };
-Blockly.JavaScript['command'] = function(block) {
+Blockly.JavaScript['command'] = function (block) {
 	var text_command_id = block.getFieldValue('command_id');
 	var dropdown_language = block.getFieldValue('Language');
 	var text_example = block.getFieldValue('example');
@@ -109,14 +115,14 @@ Blockly.JavaScript['command'] = function(block) {
 	var code = '\n// ' + text_example + '\n\n' + msg.join(' ') + '\n' + reply.join(' ==> ');
 	return code;
 };
-Blockly.JavaScript['variable'] = function(block) {
+Blockly.JavaScript['variable'] = function (block) {
 	var text_variable = block.getFieldValue('variable');
 	// TODO: Assemble JavaScript into code variable.
 	var code = '(((<<<' + text_variable + '>>>)))';
 	// TODO: Change ORDER_NONE to the correct strength.
 	return [code, Blockly.JavaScript.ORDER_NONE];
 };
-Blockly.JavaScript['dynamic_data'] = function(block) {
+Blockly.JavaScript['dynamic_data'] = function (block) {
 	var text_data_id = block.getFieldValue('data_id');
 	var checkbox_grouped = block.getFieldValue('grouped') == 'TRUE';
 	var text_separator = block.getFieldValue('separator');

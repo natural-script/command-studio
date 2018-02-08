@@ -121,9 +121,9 @@ Blockly.Blocks['alternatives'] = {
 	 * Block for creating a list with any number of elements of any type.
 	 * @this Blockly.Block
 	 */
-	init: function() {
+	init: function () {
 		this.setHelpUrl(Blockly.Msg.LISTS_CREATE_WITH_HELPURL);
-		this.setColour(Blockly.Blocks.lists.HUE);
+		this.setColour('#9c27b0');
 		this.itemCount_ = 3;
 		this.updateShape_();
 		this.setOutput(true, 'String');
@@ -135,7 +135,7 @@ Blockly.Blocks['alternatives'] = {
 	 * @return {!Element} XML storage element.
 	 * @this Blockly.Block
 	 */
-	mutationToDom: function() {
+	mutationToDom: function () {
 		var container = document.createElement('mutation');
 		container.setAttribute('items', this.itemCount_);
 		return container;
@@ -145,7 +145,7 @@ Blockly.Blocks['alternatives'] = {
 	 * @param {!Element} xmlElement XML storage element.
 	 * @this Blockly.Block
 	 */
-	domToMutation: function(xmlElement) {
+	domToMutation: function (xmlElement) {
 		this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
 		this.updateShape_();
 	},
@@ -155,7 +155,7 @@ Blockly.Blocks['alternatives'] = {
 	 * @return {!Blockly.Block} Root block in mutator.
 	 * @this Blockly.Block
 	 */
-	decompose: function(workspace) {
+	decompose: function (workspace) {
 		var containerBlock = workspace.newBlock('lists_create_with_container');
 		containerBlock.initSvg();
 		var connection = containerBlock.getInput('STACK')
@@ -173,7 +173,7 @@ Blockly.Blocks['alternatives'] = {
 	 * @param {!Blockly.Block} containerBlock Root block in mutator.
 	 * @this Blockly.Block
 	 */
-	compose: function(containerBlock) {
+	compose: function (containerBlock) {
 		var itemBlock = containerBlock.getInputTargetBlock('STACK');
 		// Count number of inputs.
 		var connections = [];
@@ -201,7 +201,7 @@ Blockly.Blocks['alternatives'] = {
 	 * @param {!Blockly.Block} containerBlock Root block in mutator.
 	 * @this Blockly.Block
 	 */
-	saveConnections: function(containerBlock) {
+	saveConnections: function (containerBlock) {
 		var itemBlock = containerBlock.getInputTargetBlock('STACK');
 		var i = 0;
 		while (itemBlock) {
@@ -216,7 +216,7 @@ Blockly.Blocks['alternatives'] = {
 	 * @private
 	 * @this Blockly.Block
 	 */
-	updateShape_: function() {
+	updateShape_: function () {
 		if (this.itemCount_ && this.getInput('EMPTY')) {
 			this.removeInput('EMPTY');
 		} else if (!this.itemCount_ && !this.getInput('EMPTY')) {
@@ -226,10 +226,14 @@ Blockly.Blocks['alternatives'] = {
 		// Add new inputs.
 		for (var i = 0; i < this.itemCount_; i++) {
 			if (!this.getInput('ADD' + i)) {
-				var input = this.appendValueInput('ADD' + i);
 				if (i == 0) {
-					input.appendField('Alternatives');
+					this.appendDummyInput()
+						.appendField('Alternatives');
+					this.appendDummyInput()
+						.appendField(new Blockly.FieldCheckbox("FALSE"), "optional")
+						.appendField("Optional");
 				}
+				var input = this.appendValueInput('ADD' + i);
 			}
 		}
 		// Remove deleted inputs.
@@ -244,12 +248,12 @@ Blockly.Blocks['dynamic_data'] = {
 	 * Block for creating a list with any number of elements of any type.
 	 * @this Blockly.Block
 	 */
-	init: function() {
+	init: function () {
 		this.itemCount_ = 3;
 		this.updateShape_();
 		this.setMutator(new Blockly.Mutator(['lists_create_with_item']));
 		this.setOutput(true, 'String');
-		this.setColour(230);
+		this.setColour('#009688');
 		this.setTooltip("");
 		this.setHelpUrl("");
 	},
@@ -258,7 +262,7 @@ Blockly.Blocks['dynamic_data'] = {
 	 * @return {!Element} XML storage element.
 	 * @this Blockly.Block
 	 */
-	mutationToDom: function() {
+	mutationToDom: function () {
 		var container = document.createElement('mutation');
 		container.setAttribute('items', this.itemCount_);
 		return container;
@@ -268,7 +272,7 @@ Blockly.Blocks['dynamic_data'] = {
 	 * @param {!Element} xmlElement XML storage element.
 	 * @this Blockly.Block
 	 */
-	domToMutation: function(xmlElement) {
+	domToMutation: function (xmlElement) {
 		this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
 		this.updateShape_();
 	},
@@ -278,7 +282,7 @@ Blockly.Blocks['dynamic_data'] = {
 	 * @return {!Blockly.Block} Root block in mutator.
 	 * @this Blockly.Block
 	 */
-	decompose: function(workspace) {
+	decompose: function (workspace) {
 		var containerBlock = workspace.newBlock('lists_create_with_container');
 		containerBlock.initSvg();
 		var connection = containerBlock.getInput('STACK')
@@ -296,7 +300,7 @@ Blockly.Blocks['dynamic_data'] = {
 	 * @param {!Blockly.Block} containerBlock Root block in mutator.
 	 * @this Blockly.Block
 	 */
-	compose: function(containerBlock) {
+	compose: function (containerBlock) {
 		var itemBlock = containerBlock.getInputTargetBlock('STACK');
 		// Count number of inputs.
 		var connections = [];
@@ -324,7 +328,7 @@ Blockly.Blocks['dynamic_data'] = {
 	 * @param {!Blockly.Block} containerBlock Root block in mutator.
 	 * @this Blockly.Block
 	 */
-	saveConnections: function(containerBlock) {
+	saveConnections: function (containerBlock) {
 		var itemBlock = containerBlock.getInputTargetBlock('STACK');
 		var i = 0;
 		while (itemBlock) {
@@ -339,7 +343,7 @@ Blockly.Blocks['dynamic_data'] = {
 	 * @private
 	 * @this Blockly.Block
 	 */
-	updateShape_: function() {
+	updateShape_: function () {
 		if (this.itemCount_ && this.getInput('EMPTY')) {
 			this.removeInput('EMPTY');
 		} else if (!this.itemCount_ && !this.getInput('EMPTY')) {
@@ -376,11 +380,11 @@ Blockly.Blocks['command'] = {
 	 * Block for creating a list with any number of elements of any type.
 	 * @this Blockly.Block
 	 */
-	init: function() {
+	init: function () {
 		this.itemCount_ = 3;
 		this.updateShape_();
 		this.setMutator(new Blockly.Mutator(['lists_create_with_item']));
-		this.setColour(230);
+		this.setColour('#e91e63');
 		this.setTooltip("");
 		this.setHelpUrl("");
 	},
@@ -389,7 +393,7 @@ Blockly.Blocks['command'] = {
 	 * @return {!Element} XML storage element.
 	 * @this Blockly.Block
 	 */
-	mutationToDom: function() {
+	mutationToDom: function () {
 		var container = document.createElement('mutation');
 		container.setAttribute('items', this.itemCount_);
 		return container;
@@ -399,7 +403,7 @@ Blockly.Blocks['command'] = {
 	 * @param {!Element} xmlElement XML storage element.
 	 * @this Blockly.Block
 	 */
-	domToMutation: function(xmlElement) {
+	domToMutation: function (xmlElement) {
 		this.itemCount_ = parseInt(xmlElement.getAttribute('items'), 10);
 		this.updateShape_();
 	},
@@ -409,7 +413,7 @@ Blockly.Blocks['command'] = {
 	 * @return {!Blockly.Block} Root block in mutator.
 	 * @this Blockly.Block
 	 */
-	decompose: function(workspace) {
+	decompose: function (workspace) {
 		var containerBlock = workspace.newBlock('lists_create_with_container');
 		containerBlock.initSvg();
 		var connection = containerBlock.getInput('STACK')
@@ -427,7 +431,7 @@ Blockly.Blocks['command'] = {
 	 * @param {!Blockly.Block} containerBlock Root block in mutator.
 	 * @this Blockly.Block
 	 */
-	compose: function(containerBlock) {
+	compose: function (containerBlock) {
 		var itemBlock = containerBlock.getInputTargetBlock('STACK');
 		// Count number of inputs.
 		var connections = [];
@@ -455,7 +459,7 @@ Blockly.Blocks['command'] = {
 	 * @param {!Blockly.Block} containerBlock Root block in mutator.
 	 * @this Blockly.Block
 	 */
-	saveConnections: function(containerBlock) {
+	saveConnections: function (containerBlock) {
 		var itemBlock = containerBlock.getInputTargetBlock('STACK');
 		var i = 0;
 		while (itemBlock) {
@@ -470,7 +474,7 @@ Blockly.Blocks['command'] = {
 	 * @private
 	 * @this Blockly.Block
 	 */
-	updateShape_: function() {
+	updateShape_: function () {
 		if (this.itemCount_ && this.getInput('EMPTY')) {
 			this.removeInput('EMPTY');
 		} else if (!this.itemCount_ && !this.getInput('EMPTY')) {
@@ -483,7 +487,7 @@ Blockly.Blocks['command'] = {
 				if (i == 0) {
 					this.appendDummyInput()
 						.appendField("Command")
-					.appendField(new Blockly.FieldTextInput("c0"), "command_id");
+						.appendField(new Blockly.FieldTextInput("c0"), "command_id");
 					this.appendDummyInput()
 						.appendField("Language")
 						.appendField(new Blockly.FieldDropdown([
@@ -512,7 +516,7 @@ Blockly.Blocks['lists_create_with_container'] = {
 	 * Mutator block for list container.
 	 * @this Blockly.Block
 	 */
-	init: function() {
+	init: function () {
 		this.setColour(Blockly.Blocks.lists.HUE);
 		this.appendDummyInput()
 			.appendField(Blockly.Msg.LISTS_CREATE_WITH_CONTAINER_TITLE_ADD);
@@ -526,7 +530,7 @@ Blockly.Blocks['lists_create_with_item'] = {
 	 * Mutator block for adding items.
 	 * @this Blockly.Block
 	 */
-	init: function() {
+	init: function () {
 		this.setColour(Blockly.Blocks.lists.HUE);
 		this.appendDummyInput()
 			.appendField(Blockly.Msg.LISTS_CREATE_WITH_ITEM_TITLE);
@@ -541,7 +545,7 @@ Blockly.Blocks['lists_indexOf'] = {
 	 * Block for finding an item in the list.
 	 * @this Blockly.Block
 	 */
-	init: function() {
+	init: function () {
 		var OPERATORS = [
 			[Blockly.Msg.LISTS_INDEX_OF_FIRST, 'FIRST'],
 			[Blockly.Msg.LISTS_INDEX_OF_LAST, 'LAST']
@@ -557,7 +561,7 @@ Blockly.Blocks['lists_indexOf'] = {
 		this.setInputsInline(true);
 		// Assign 'this' to a variable for use in the tooltip closure below.
 		var thisBlock = this;
-		this.setTooltip(function() {
+		this.setTooltip(function () {
 			return Blockly.Msg.LISTS_INDEX_OF_TOOLTIP.replace('%1', thisBlock.workspace.options.oneBasedIndex ? '0' : '-1');
 		});
 	}
@@ -581,7 +585,7 @@ Blockly.defineBlocksWithJsonArray([ // BEGIN JSON EXTRACT
 			"text": ""
 		}],
 		"output": "String",
-		"colour": "%{BKY_TEXTS_HUE}",
+		"colour": "#2196f3",
 		"helpUrl": "%{BKY_TEXT_TEXT_HELPURL}",
 		"tooltip": "%{BKY_TEXT_TEXT_TOOLTIP}",
 		"extensions": ["text_quotes", "parent_tooltip_when_inline"]
@@ -619,7 +623,7 @@ Blockly.Constants.Text.QUOTE_IMAGE_MIXIN = {
 	 * @param {string} fieldName The name of the field to wrap with quotes.
 	 * @this Blockly.Block
 	 */
-	quoteField_: function(fieldName) {
+	quoteField_: function (fieldName) {
 		for (var i = 0, input; input = this.inputList[i]; i++) {
 			for (var j = 0, field; field = input.fieldRow[j]; j++) {
 				if (fieldName == field.name) {
@@ -639,41 +643,41 @@ Blockly.Constants.Text.QUOTE_IMAGE_MIXIN = {
 	 * @returns {!Blockly.FieldImage} The new field.
 	 * @this Blockly.Block
 	 */
-	newQuote_: function(open) {
+	newQuote_: function (open) {
 		var isLeft = this.RTL ? !open : open;
 		var dataUri = isLeft ? this.QUOTE_IMAGE_LEFT_DATAURI : this.QUOTE_IMAGE_RIGHT_DATAURI;
 		return new Blockly.FieldImage(dataUri, this.QUOTE_IMAGE_WIDTH, this.QUOTE_IMAGE_HEIGHT, isLeft ? '\u201C' : '\u201D');
 	}
 };
 /** Wraps TEXT field with images of double quote characters. */
-Blockly.Constants.Text.TEXT_QUOTES_EXTENSION = function() {
+Blockly.Constants.Text.TEXT_QUOTES_EXTENSION = function () {
 	this.mixin(Blockly.Constants.Text.QUOTE_IMAGE_MIXIN);
 	this.quoteField_('TEXT');
 };
 Blockly.Extensions.register('text_quotes', Blockly.Constants.Text.TEXT_QUOTES_EXTENSION);
 Blockly.Blocks['variable'] = {
-	init: function() {
+	init: function () {
 		this.appendDummyInput()
 			.appendField("Variable")
 			.appendField(new Blockly.FieldTextInput(""), "variable");
 		this.setOutput(true, null);
-		this.setColour(230);
+		this.setColour('#ff5722');
 		this.setTooltip("");
 		this.setHelpUrl("");
 	}
 };
 Blockly.Blocks['self_reference'] = {
-  init: function() {
-    this.appendDummyInput()
-        .appendField("Self reference to ")
-        .appendField(new Blockly.FieldTextInput(""), "reference");
-    this.appendDummyInput()
-        .appendField(new Blockly.FieldImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAQAAAAqJXdxAAAAn0lEQVQI1z3OMa5BURSF4f/cQhAKjUQhuQmFNwGJEUi0RKN5rU7FHKhpjEH3TEMtkdBSCY1EIv8r7nFX9e29V7EBAOvu7RPjwmWGH/VuF8CyN9/OAdvqIXYLvtRaNjx9mMTDyo+NjAN1HNcl9ZQ5oQMM3dgDUqDo1l8DzvwmtZN7mnD+PkmLa+4mhrxVA9fRowBWmVBhFy5gYEjKMfz9AylsaRRgGzvZAAAAAElFTkSuQmCC", 15, 15, "*"))
-        .appendField(new Blockly.FieldTextInput(""), "value")
-        .appendField(new Blockly.FieldImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAQAAAAqJXdxAAAAqUlEQVQI1z3KvUpCcRiA8ef9E4JNHhI0aFEacm1o0BsI0Slx8wa8gLauoDnoBhq7DcfWhggONDmJJgqCPA7neJ7p934EOOKOnM8Q7PDElo/4x4lFb2DmuUjcUzS3URnGib9qaPNbuXvBO3sGPHJDRG6fGVdMSeWDP2q99FQdFrz26Gu5Tq7dFMzUvbXy8KXeAj57cOklgA+u1B5AoslLtGIHQMaCVnwDnADZIFIrXsoXrgAAAABJRU5ErkJggg==", 15, 15, "*"));
-    this.setOutput(true, null);
-    this.setColour(165);
- this.setTooltip("");
- this.setHelpUrl("");
-  }
+	init: function () {
+		this.appendDummyInput()
+			.appendField("Self reference to ")
+			.appendField(new Blockly.FieldTextInput(""), "reference");
+		this.appendDummyInput()
+			.appendField(new Blockly.FieldImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAQAAAAqJXdxAAAAn0lEQVQI1z3OMa5BURSF4f/cQhAKjUQhuQmFNwGJEUi0RKN5rU7FHKhpjEH3TEMtkdBSCY1EIv8r7nFX9e29V7EBAOvu7RPjwmWGH/VuF8CyN9/OAdvqIXYLvtRaNjx9mMTDyo+NjAN1HNcl9ZQ5oQMM3dgDUqDo1l8DzvwmtZN7mnD+PkmLa+4mhrxVA9fRowBWmVBhFy5gYEjKMfz9AylsaRRgGzvZAAAAAElFTkSuQmCC", 15, 15, "*"))
+			.appendField(new Blockly.FieldTextInput(""), "value")
+			.appendField(new Blockly.FieldImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAKCAQAAAAqJXdxAAAAqUlEQVQI1z3KvUpCcRiA8ef9E4JNHhI0aFEacm1o0BsI0Slx8wa8gLauoDnoBhq7DcfWhggONDmJJgqCPA7neJ7p934EOOKOnM8Q7PDElo/4x4lFb2DmuUjcUzS3URnGib9qaPNbuXvBO3sGPHJDRG6fGVdMSeWDP2q99FQdFrz26Gu5Tq7dFMzUvbXy8KXeAj57cOklgA+u1B5AoslLtGIHQMaCVnwDnADZIFIrXsoXrgAAAABJRU5ErkJggg==", 15, 15, "*"));
+		this.setOutput(true, null);
+		this.setColour('#ffeb3b');
+		this.setTooltip("");
+		this.setHelpUrl("");
+	}
 };

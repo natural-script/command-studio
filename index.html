@@ -4,13 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jste Command Studio</title>
-<script src="JS/jquery-3.2.1.min.js"></script>
-<script src="JS/jquery-migrate-3.0.0.min.js"></script>
-<script src="JS/blockly_compressed.js"></script>
-<script src="JS/javascript.js"></script>
-<script src="JS/generator.js"></script>
-<script src="JS/Translations/en.js"></script>
-<script src="JS/blocks.js"></script>
+<script src="assets/JS/please-wait.js"></script>
+<link rel="stylesheet" href="assets/CSS/please-wait.css">
+<script>
+window.loading_screen = window.pleaseWait({
+        logo: "assets/images/logo.png",
+        backgroundColor: '#f46d3b',
+        loadingHtml: "<p class='loading-message'>A good day to you fine user!</p>"
+});
+</script>
+<script src="assets/JS/jquery-3.2.1.min.js"></script>
+<script src="assets/JS/jquery-migrate-3.0.0.min.js"></script>
+<script src="assets/JS/materialize.js"></script>
+<script src="assets/JS/blockly_compressed.js"></script>
+<script src="assets/JS/javascript.js"></script>
+<script src="assets/JS/generator.js"></script>
+<script src="assets/JS/Translations/en.js"></script>
+<script src="assets/JS/blocks.js"></script>
+<link rel="stylesheet" href="assets/CSS/normalize.css">
+<link rel="stylesheet" href="assets/CSS/materialize.css">
 <script>
 'use strict';
 var workspace = null;
@@ -72,7 +84,6 @@ Blockly.Xml.domToWorkspace(workspace, workspaceBlocks);
     if (text) {
       document.getElementById('importExport').value = text;
     }
-  taChange();
 }
 }
 function setBackgroundColor() {
@@ -99,26 +110,23 @@ console.log(xml);
   output.value = Blockly.Xml.domToPrettyText(xml);
   output.focus();
   output.select();
-  taChange();
 }
 
 function fromXml() {
   var input = document.getElementById('importExport');
   var xml = Blockly.Xml.textToDom(input.value);
   Blockly.Xml.domToWorkspace(xml, workspace);
-  taChange();
 }
 
 function toCode(lang) {
   var output = document.getElementById('importExport');
   var generatedCode = Blockly[lang].workspaceToCode(workspace);
-  output.value = generatedCode;
-  $.ajax({
+console.log(generatedCode);
+  /*$.ajax({
   type: 'POST',
   url: 'https://jste-manager.herokuapp.com/submitCommand',
   data: {command: generatedCode}
-});
-  taChange();
+});*/
 }
 
 // Disable the "Import from XML" button if the XML is invalid.
@@ -153,8 +161,8 @@ h1 {
 }
 #blocklyDiv {
   float: right;
-  height: 95%;
-  width: 70%;
+  height: 100%;
+  width: 100%;
 }
 #importExport {
   font-family: monospace;
@@ -164,23 +172,36 @@ h1 {
   font-style: italic;
 }
 
+.importBtn,
+.exportBtn,
+.submitBtn {
+position: fixed;
+    z-index: 99;
+    background-color: #f44336;
+    bottom: 30px;
+}
+
+.importBtn {
+right: 290px;
+
+}
+
+.exportBtn {
+right: 160px;
+}
+
+.submitBtn {
+
+    right: 30px;
+}
+
 </style>
 </head>
 <body onload="start()">
-
+<a id="submitBtn" class="waves-effect waves-light btn submitBtn" onclick="fromXml()">Import</a>
+<a id="exportBtn" class="waves-effect waves-light btn exportBtn" onclick="toXml()">Export</a>
+<a id="importBtn" class="waves-effect waves-light btn importBtn" onclick="toCode('JavaScript')">Submit</a>
   <div id="blocklyDiv"></div>
-
-  <h1>Jste Command Builder</h1>
-
-    <input type="button" value="Export to XML" onclick="toXml()">
-    &nbsp;
-    <input type="button" value="Import from XML" onclick="fromXml()" id="import">
-    <br>
-    <input type="button" value="Submit" onclick="toCode('JavaScript')">
-    <br>
-    <textarea id="importExport" style="width: 26%; height: 12em"
-      onchange="taChange();" onkeyup="taChange()"></textarea>
-  </p>
 
 <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
   <block type="text">
