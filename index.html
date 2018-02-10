@@ -1,229 +1,350 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jste Command Studio</title>
-<script src="assets/JS/please-wait.js"></script>
-<link rel="stylesheet" href="assets/CSS/please-wait.css">
-<script>
-window.loading_screen = window.pleaseWait({
-        logo: "assets/images/logo.png",
-        backgroundColor: '#f46d3b',
-        loadingHtml: "<p class='loading-message'>A good day to you fine user!</p>"
-});
-</script>
-<script src="assets/JS/jquery-3.2.1.min.js"></script>
-<script src="assets/JS/jquery-migrate-3.0.0.min.js"></script>
-<script src="assets/JS/materialize.js"></script>
-<script src="assets/JS/blockly_compressed.js"></script>
-<script src="assets/JS/javascript.js"></script>
-<script src="assets/JS/generator.js"></script>
-<script src="assets/JS/Translations/en.js"></script>
-<script src="assets/JS/blocks.js"></script>
-<link rel="stylesheet" href="assets/CSS/normalize.css">
-<link rel="stylesheet" href="assets/CSS/materialize.css">
-<script>
-'use strict';
-var workspace = null;
-var fakeDragStack = [];
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jste Command Studio</title>
+  <script src="assets/JS/please-wait.js"></script>
+  <link rel="stylesheet" href="assets/CSS/please-wait.css">
+  <script>
+    window.loading_screen = window.pleaseWait({
+      logo: "assets/images/logo.png",
+      backgroundColor: '#f46d3b',
+      loadingHtml: '<div class="sk-folding-cube"> \
+  	<div class="sk-cube1 sk-cube"></div> \
+  	<div class="sk-cube2 sk-cube"></div> \
+  	<div class="sk-cube4 sk-cube"></div> \
+  	<div class="sk-cube3 sk-cube"></div> \
+	</div>'
+    });
+  </script>
+  <script src="assets/JS/jquery-3.2.1.min.js"></script>
+  <script src="assets/JS/jquery-migrate-3.0.0.min.js"></script>
+  <script src="assets/JS/materialize.js"></script>
+  <script src="assets/JS/blockly_compressed.js"></script>
+  <script src="assets/JS/javascript.js"></script>
+  <script src="assets/JS/generator.js"></script>
+  <script src="assets/JS/Translations/en.js"></script>
+  <script src="assets/JS/blocks.js"></script>
+  <link rel="stylesheet" href="assets/CSS/normalize.css">
+  <link rel="stylesheet" href="assets/CSS/materialize.css">
+  <script>
+    'use strict';
+    var workspace = null;
+    var fakeDragStack = [];
 
-function start() {
-  setBackgroundColor();
+    function start() {
+      setBackgroundColor();
 
-  // Parse the URL arguments.
+      // Parse the URL arguments.
 
-  // Create main workspace.
-  /* TODO: Change toolbox XML ID if necessary. Can export toolbox XML from Workspace Factory. */
-var toolbox = document.getElementById("toolbox");
+      // Create main workspace.
+      /* TODO: Change toolbox XML ID if necessary. Can export toolbox XML from Workspace Factory. */
+      var toolbox = document.getElementById("toolbox");
 
-var options = { 
-	toolbox : toolbox, 
-	collapse : true, 
-	comments : true, 
-	disable : true, 
-	maxBlocks : Infinity, 
-	trashcan : true, 
-	horizontalLayout : false, 
-	toolboxPosition : 'start', 
-	css : true, 
-	media : 'https://blockly-demo.appspot.com/static/media/', 
-	rtl : false, 
-	scrollbars : true, 
-	sounds : true, 
-	oneBasedIndex : true, 
-	grid : {
-		spacing : 20, 
-		length : 1, 
-		colour : '#888', 
-		snap : false
-	}, 
-	zoom : {
-		controls : true, 
-		wheel : true, 
-		startScale : 1, 
-		maxScale : 3, 
-		minScale : 0.3, 
-		scaleSpeed : 1.2
-	}
-};
+      var options = {
+        toolbox: toolbox,
+        collapse: true,
+        comments: true,
+        disable: true,
+        maxBlocks: Infinity,
+        trashcan: true,
+        horizontalLayout: false,
+        toolboxPosition: 'start',
+        css: true,
+        media: 'https://blockly-demo.appspot.com/static/media/',
+        rtl: false,
+        scrollbars: true,
+        sounds: true,
+        oneBasedIndex: true,
+        grid: {
+          spacing: 20,
+          length: 1,
+          colour: '#888',
+          snap: false
+        },
+        zoom: {
+          controls: true,
+          wheel: true,
+          startScale: 1,
+          maxScale: 3,
+          minScale: 0.3,
+          scaleSpeed: 1.2
+        }
+      };
 
-/* Inject your workspace */ 
-workspace = Blockly.inject('blocklyDiv', options);
+      /* Inject your workspace */
+      workspace = Blockly.inject('blocklyDiv', options);
 
-/* Load Workspace Blocks from XML to workspace. Remove all code below if no blocks to load */
+      /* Load Workspace Blocks from XML to workspace. Remove all code below if no blocks to load */
 
-/* TODO: Change workspace blocks XML ID if necessary. Can export workspace blocks XML from Workspace Factory. */
-var workspaceBlocks = document.getElementById("workspaceBlocks"); 
+      /* TODO: Change workspace blocks XML ID if necessary. Can export workspace blocks XML from Workspace Factory. */
+      var workspaceBlocks = document.getElementById("workspaceBlocks");
 
-/* Load blocks to workspace. */
-Blockly.Xml.domToWorkspace(workspace, workspaceBlocks);
-  // Restore previously displayed text.
-  if (sessionStorage) {
-    var text = sessionStorage.getItem('textarea');
-    if (text) {
-      document.getElementById('importExport').value = text;
+      /* Load blocks to workspace. */
+      Blockly.Xml.domToWorkspace(workspace, workspaceBlocks);
+      // Restore previously displayed text.
+      if (sessionStorage) {
+        var text = sessionStorage.getItem('textarea');
+        if (text) {
+          document.getElementById('importExport').value = text;
+        }
+      }
     }
-}
-}
-function setBackgroundColor() {
-  var lilac = '#d6d6ff';
 
-  var currentPage = window.location.href;
-  var regexFile = /^file[\S]*$/;
+    function setBackgroundColor() {
+      var lilac = '#d6d6ff';
 
-  if (regexFile.test(currentPage)) {
-    document.getElementsByTagName('body')[0].style.backgroundColor = lilac;
-  }
-}
+      var currentPage = window.location.href;
+      var regexFile = /^file[\S]*$/;
 
-function getToolboxElement() {
-  var match = location.search.match(/toolbox=([^&]+)/);
-  return document.getElementById('toolbox-' + (match ? match[1] : 'categories'));
-}
+      if (regexFile.test(currentPage)) {
+        document.getElementsByTagName('body')[0].style.backgroundColor = lilac;
+      }
+    }
 
-function toXml() {
-  var output = document.getElementById('importExport');
+    function getToolboxElement() {
+      var match = location.search.match(/toolbox=([^&]+)/);
+      return document.getElementById('toolbox-' + (match ? match[1] : 'categories'));
+    }
 
-  var xml = Blockly.Xml.workspaceToDom(workspace);
-console.log(xml);
-  output.value = Blockly.Xml.domToPrettyText(xml);
-  output.focus();
-  output.select();
-}
+    function toXml() {
+      var output = document.getElementById('importExport');
 
-function fromXml() {
-  var input = document.getElementById('importExport');
-  var xml = Blockly.Xml.textToDom(input.value);
-  Blockly.Xml.domToWorkspace(xml, workspace);
-}
+      var xml = Blockly.Xml.workspaceToDom(workspace);
+      console.log(xml);
+      output.value = Blockly.Xml.domToPrettyText(xml);
+      output.focus();
+      output.select();
+    }
 
-function toCode(lang) {
-  var output = document.getElementById('importExport');
-  var generatedCode = Blockly[lang].workspaceToCode(workspace);
-console.log(generatedCode);
-  /*$.ajax({
-  type: 'POST',
-  url: 'https://jste-manager.herokuapp.com/submitCommand',
-  data: {command: generatedCode}
-});*/
-}
+    function fromXml() {
+      var input = document.getElementById('importExport');
+      var xml = Blockly.Xml.textToDom(input.value);
+      Blockly.Xml.domToWorkspace(xml, workspace);
+    }
 
-// Disable the "Import from XML" button if the XML is invalid.
-// Preserve text between page reloads.
-function taChange() {
-  var textarea = document.getElementById('importExport');
-  if (sessionStorage) {
-    sessionStorage.setItem('textarea', textarea.value);
-  }
-  var valid = true;
-  try {
-    Blockly.Xml.textToDom(textarea.value);
-  } catch (e) {
-    valid = false;
-  }
-  document.getElementById('import').disabled = !valid;
-}
-</script>
+    function toCode(lang) {
+      var output = document.getElementById('importExport');
+      var generatedCode = Blockly[lang].workspaceToCode(workspace);
+      console.log(generatedCode);
+      $.ajax({
+        type: 'POST',
+        url: 'https://jste-manager.herokuapp.com/submitCommand',
+        data: {
+          command: generatedCode
+        }
+      });
+    }
 
-<style>
-html, body {
-  height: 100%;
-}
-body {
-  background-color: #fff;
-  font-family: sans-serif;
-  overflow: hidden;
-}
-h1 {
-  font-weight: normal;
-  font-size: 140%;
-}
-#blocklyDiv {
-  float: right;
-  height: 100%;
-  width: 100%;
-}
-#importExport {
-  font-family: monospace;
-}
+    // Disable the "Import from XML" button if the XML is invalid.
+    // Preserve text between page reloads.
+    function taChange() {
+      var textarea = document.getElementById('importExport');
+      if (sessionStorage) {
+        sessionStorage.setItem('textarea', textarea.value);
+      }
+      var valid = true;
+      try {
+        Blockly.Xml.textToDom(textarea.value);
+      } catch (e) {
+        valid = false;
+      }
+      document.getElementById('import').disabled = !valid;
+    }
+  </script>
 
-.ioLabel>.blocklyFlyoutLabelText {
-  font-style: italic;
-}
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
 
-.importBtn,
-.exportBtn,
-.submitBtn {
-position: fixed;
-    z-index: 99;
-    background-color: #f44336;
-    bottom: 30px;
-}
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
 
-.importBtn {
-right: 290px;
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
 
-}
+    #blocklyDiv {
+      float: right;
+      height: 100%;
+      width: 100%;
+    }
 
-.exportBtn {
-right: 160px;
-}
+    #importExport {
+      font-family: monospace;
+    }
 
-.submitBtn {
+    .ioLabel>.blocklyFlyoutLabelText {
+      font-style: italic;
+    }
 
-    right: 30px;
-}
+    .importBtn,
+    .exportBtn,
+    .submitBtn {
+      position: fixed;
+      z-index: 99;
+      background-color: #f44336;
+      bottom: 30px;
+    }
 
-</style>
+    .importBtn {
+      right: 290px;
+
+    }
+
+    .exportBtn {
+      right: 160px;
+    }
+
+    .submitBtn {
+
+      right: 30px;
+    }
+
+    .sk-folding-cube {
+      margin: 20px auto;
+      width: 40px;
+      height: 40px;
+      position: relative;
+      -webkit-transform: rotateZ(45deg);
+      transform: rotateZ(45deg);
+    }
+
+    .sk-folding-cube .sk-cube {
+      float: left;
+      width: 50%;
+      height: 50%;
+      position: relative;
+      -webkit-transform: scale(1.1);
+      -ms-transform: scale(1.1);
+      transform: scale(1.1);
+    }
+
+    .sk-folding-cube .sk-cube:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #333;
+      -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
+      animation: sk-foldCubeAngle 2.4s infinite linear both;
+      -webkit-transform-origin: 100% 100%;
+      -ms-transform-origin: 100% 100%;
+      transform-origin: 100% 100%;
+    }
+
+    .sk-folding-cube .sk-cube2 {
+      -webkit-transform: scale(1.1) rotateZ(90deg);
+      transform: scale(1.1) rotateZ(90deg);
+    }
+
+    .sk-folding-cube .sk-cube3 {
+      -webkit-transform: scale(1.1) rotateZ(180deg);
+      transform: scale(1.1) rotateZ(180deg);
+    }
+
+    .sk-folding-cube .sk-cube4 {
+      -webkit-transform: scale(1.1) rotateZ(270deg);
+      transform: scale(1.1) rotateZ(270deg);
+    }
+
+    .sk-folding-cube .sk-cube2:before {
+      -webkit-animation-delay: 0.3s;
+      animation-delay: 0.3s;
+    }
+
+    .sk-folding-cube .sk-cube3:before {
+      -webkit-animation-delay: 0.6s;
+      animation-delay: 0.6s;
+    }
+
+    .sk-folding-cube .sk-cube4:before {
+      -webkit-animation-delay: 0.9s;
+      animation-delay: 0.9s;
+    }
+
+    @-webkit-keyframes sk-foldCubeAngle {
+      0%,
+      10% {
+        -webkit-transform: perspective(140px) rotateX(-180deg);
+        transform: perspective(140px) rotateX(-180deg);
+        opacity: 0;
+      }
+      25%,
+      75% {
+        -webkit-transform: perspective(140px) rotateX(0deg);
+        transform: perspective(140px) rotateX(0deg);
+        opacity: 1;
+      }
+      90%,
+      100% {
+        -webkit-transform: perspective(140px) rotateY(180deg);
+        transform: perspective(140px) rotateY(180deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes sk-foldCubeAngle {
+      0%,
+      10% {
+        -webkit-transform: perspective(140px) rotateX(-180deg);
+        transform: perspective(140px) rotateX(-180deg);
+        opacity: 0;
+      }
+      25%,
+      75% {
+        -webkit-transform: perspective(140px) rotateX(0deg);
+        transform: perspective(140px) rotateX(0deg);
+        opacity: 1;
+      }
+      90%,
+      100% {
+        -webkit-transform: perspective(140px) rotateY(180deg);
+        transform: perspective(140px) rotateY(180deg);
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
+
 <body onload="start()">
-<a id="submitBtn" class="waves-effect waves-light btn submitBtn" onclick="fromXml()">Import</a>
-<a id="exportBtn" class="waves-effect waves-light btn exportBtn" onclick="toXml()">Export</a>
-<a id="importBtn" class="waves-effect waves-light btn importBtn" onclick="toCode('JavaScript')">Submit</a>
+  <a id="submitBtn" class="waves-effect waves-light btn submitBtn" onclick="fromXml()">Import</a>
+  <a id="exportBtn" class="waves-effect waves-light btn exportBtn" onclick="toXml()">Export</a>
+  <a id="importBtn" class="waves-effect waves-light btn importBtn" onclick="toCode('JavaScript')">Submit</a>
   <div id="blocklyDiv"></div>
 
-<xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
-  <block type="text">
-    <field name="TEXT"></field>
-  </block>
-  <block type="command">
-    <field name="command_id">c0</field>
-    <field name="Language">en</field>
-  </block>
-  <block type="alternatives">
-    <mutation items="3"></mutation>
-  </block>
-  <block type="variable">
-    <field name="variable"></field>
-  </block>
-  <block type="self_reference">
-    <field name="reference"></field>
-    <field name="value"></field>
-  </block>
-  <block type="dynamic_data">
-    <field name="grouped">FALSE</field>
-  </block>
-</xml>
+  <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
+    <block type="text">
+      <field name="TEXT"></field>
+    </block>
+    <block type="command">
+      <field name="command_id">c0</field>
+      <field name="Language">en</field>
+    </block>
+    <block type="alternatives">
+      <mutation items="3"></mutation>
+    </block>
+    <block type="variable">
+      <field name="variable"></field>
+    </block>
+    <block type="self_reference">
+      <field name="reference"></field>
+      <field name="value"></field>
+    </block>
+    <block type="dynamic_data">
+      <field name="grouped">FALSE</field>
+    </block>
+  </xml>
 </body>
+
 </html>
