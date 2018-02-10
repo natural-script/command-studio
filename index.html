@@ -130,7 +130,7 @@
       var generatedCode = Blockly[lang].workspaceToCode(workspace);
       console.log(generatedCode);
       $.ajax({
-        type: 'POST',
+        method: 'POST',
         url: 'https://jste-manager.herokuapp.com/submitCommand',
         data: {
           command: generatedCode
