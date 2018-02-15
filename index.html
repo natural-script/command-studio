@@ -4,37 +4,95 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="assets/media/favicon.ico">
   <title>Jste Command Studio</title>
   <script src="assets/JS/please-wait.js"></script>
   <link rel="stylesheet" href="assets/CSS/please-wait.css">
+  <script src="assets/JS/jquery-3.2.1.min.js"></script>
+  <script src="assets/JS/jquery-migrate-3.0.0.min.js"></script>
   <script>
-    window.loading_screen = window.pleaseWait({
-      logo: "assets/images/logo.png",
-      backgroundColor: '#f46d3b',
-      loadingHtml: '<div class="sk-folding-cube"> \
+    $(window).ready(function () {
+      window.loading_screen = window.pleaseWait({
+        logo: "assets/media/logo.png",
+        backgroundColor: '#f46d3b',
+        loadingHtml: '<div class="sk-folding-cube"> \
   	<div class="sk-cube1 sk-cube"></div> \
   	<div class="sk-cube2 sk-cube"></div> \
   	<div class="sk-cube4 sk-cube"></div> \
   	<div class="sk-cube3 sk-cube"></div> \
 	</div>'
+      });
+    });
+    $(document).ready(function () {
+      window.loading_screen.finish();
     });
   </script>
-  <script src="assets/JS/jquery-3.2.1.min.js"></script>
-  <script src="assets/JS/jquery-migrate-3.0.0.min.js"></script>
   <script src="assets/JS/materialize.js"></script>
   <script src="assets/JS/blockly_compressed.js"></script>
   <script src="assets/JS/javascript.js"></script>
   <script src="assets/JS/generator.js"></script>
   <script src="assets/JS/Translations/en.js"></script>
   <script src="assets/JS/blocks.js"></script>
+  <script src="assets/JS/iziModal.js"></script>
+  <script src="assets/JS/filereader.js"></script>
+  <script src="assets/JS/FileSaver.js"></script>
+  <script src="assets/JS/jsoneditor.js"></script>
   <link rel="stylesheet" href="assets/CSS/normalize.css">
+  <link rel="stylesheet" href="assets/CSS/GoogleMaterialIcons.css">
   <link rel="stylesheet" href="assets/CSS/materialize.css">
+  <link rel="stylesheet" href="assets/CSS/iziModal.css">
+  <link rel="stylesheet" href="assets/CSS/jsoneditor.css">
   <script>
     'use strict';
     var workspace = null;
     var fakeDragStack = [];
 
     function start() {
+      $('#jsonEditorModal').iziModal();
+      var elem = document.querySelector('.commandsFAB');
+      var commandsFABInstance = M.FloatingActionButton.init(elem, {
+        direction: 'left',
+        hoverEnabled: false
+      });
+      var elem = document.querySelector('.wordsDBFAB');
+      var wordsDBFABInstance = M.FloatingActionButton.init(elem, {
+        direction: 'left',
+        hoverEnabled: false
+      });
+      window.editor = new JSONEditor(document.getElementById('jsoneditor'));
+      $.ajax({
+        url: 'https://rawgit.com/project-jste/framework/master/src/JS/Translations/words.json',
+        dataType: 'json',
+        async: false,
+        success: function (json) {
+          editor.set(json);
+        }
+      });
+      document.getElementById('importCommandsBtn').onclick = function () {
+        document.getElementById('importCommandsFile').click();
+      };
+      document.getElementById('importWordsDBBtn').onclick = function () {
+        document.getElementById('importWordsDBFile').click();
+      };
+      $('#openWordsDBEditorBtn').on('click', function () {
+        $('#jsonEditorModal').iziModal('open');
+      });
+      $("#importCommandsFile").fileReaderJS({
+        readAsDefault: 'Text',
+        on: {
+          load: function (event, file) {
+            fromXml(event.target.result);
+          }
+        }
+      });
+      $("#importWordsDBFile").fileReaderJS({
+        readAsDefault: 'Text',
+        on: {
+          load: function (event, file) {
+            editor.setText(event.target.result);
+          }
+        }
+      });
       setBackgroundColor();
 
       // Parse the URL arguments.
@@ -53,7 +111,7 @@
         horizontalLayout: false,
         toolboxPosition: 'start',
         css: true,
-        media: 'https://blockly-demo.appspot.com/static/media/',
+        media: 'assets/media/',
         rtl: false,
         scrollbars: true,
         sounds: true,
@@ -70,7 +128,7 @@
           startScale: 1,
           maxScale: 3,
           minScale: 0.3,
-          scaleSpeed: 1.2
+          scaleSpeed: 0.5
         }
       };
 
@@ -111,19 +169,25 @@
 
     function toXml() {
       var output = document.getElementById('importExport');
-
       var xml = Blockly.Xml.workspaceToDom(workspace);
-      console.log(xml);
-      output.value = Blockly.Xml.domToPrettyText(xml);
-      output.focus();
-      output.select();
+      var blob = new Blob([Blockly.Xml.domToPrettyText(xml)], {
+        type: "text/plain;charset=utf-8"
+      });
+      saveAs(blob, "My-Contributing-To-Jste.xml");
     }
 
-    function fromXml() {
-      var input = document.getElementById('importExport');
-      var xml = Blockly.Xml.textToDom(input.value);
+    function exportWordsDB() {
+      var blob = new Blob([editor.getText()], {
+        type: "text/plain;charset=utf-8"
+      });
+      saveAs(blob, "My-Contributing-To-Jste.json");
+    }
+
+    function fromXml(importedXML) {
+      var xml = Blockly.Xml.textToDom(importedXML);
       Blockly.Xml.domToWorkspace(xml, workspace);
     }
+
 
     function toCode(lang) {
       var output = document.getElementById('importExport');
@@ -133,25 +197,21 @@
         method: 'POST',
         url: 'https://jste-manager.herokuapp.com/submitCommand',
         data: {
+          type: 'command',
           command: generatedCode
         }
       });
     }
 
-    // Disable the "Import from XML" button if the XML is invalid.
-    // Preserve text between page reloads.
-    function taChange() {
-      var textarea = document.getElementById('importExport');
-      if (sessionStorage) {
-        sessionStorage.setItem('textarea', textarea.value);
-      }
-      var valid = true;
-      try {
-        Blockly.Xml.textToDom(textarea.value);
-      } catch (e) {
-        valid = false;
-      }
-      document.getElementById('import').disabled = !valid;
+    function submitWordsDB(lang) {
+      $.ajax({
+        method: 'POST',
+        url: 'https://jste-manager.herokuapp.com/submitCommand',
+        data: {
+          type: 'wordsDB',
+          DB: editor.getText()
+        }
+      });
     }
   </script>
 
@@ -235,7 +295,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #333;
+      background-color: white;
       -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
       animation: sk-foldCubeAngle 2.4s infinite linear both;
       -webkit-transform-origin: 100% 100%;
@@ -314,13 +374,76 @@
         opacity: 0;
       }
     }
+
+    #jsoneditor {
+      width: 600px;
+      height: 500px;
+    }
+
+    #importCommandsFile,
+    #importWordsDBFile {
+      display: none;
+    }
   </style>
 </head>
 
-<body onload="start()">
-  <a id="submitBtn" class="waves-effect waves-light btn submitBtn" onclick="fromXml()">Import</a>
-  <a id="exportBtn" class="waves-effect waves-light btn exportBtn" onclick="toXml()">Export</a>
-  <a id="importBtn" class="waves-effect waves-light btn importBtn" onclick="toCode('JavaScript')">Submit</a>
+<body onload="start();">
+  <div id="jsonEditorModal" data-iziModal-title="Contribute To The Words Translations DB">
+    <input type="file" accept=".json" id="importWordsDBFile" />
+    <div id="jsoneditor">
+      <div class="fixed-action-btn wordsDBFAB">
+        <a class="btn-floating btn-large red">
+          <i class="large material-icons">mode_edit</i>
+        </a>
+        <ul>
+          <li>
+            <a id="importWordsDBBtn" class="btn-floating red">
+              <i class="material-icons">file_upload</i>
+            </a>
+          </li>
+          <li>
+            <a id="exportWordsDBBtn" class="btn-floating yellow darken-1" onclick="exportWordsDB()">
+              <i class="material-icons">save</i>
+            </a>
+          </li>
+          <li>
+            <a id="submitWordsDBBtn" class="btn-floating green" onclick="submitWordsDB()">
+              <i class="material-icons">send</i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <input type="file" accept=".xml" id="importCommandsFile" />
+  <div class="fixed-action-btn commandsFAB">
+    <a class="btn-floating btn-large red">
+      <i class="large material-icons">mode_edit</i>
+    </a>
+    <ul>
+      <li>
+        <a id="openWordsDBEditorBtn" class="btn-floating blue">
+          <i class="material-icons">translate</i>
+        </a>
+        </li>
+        <li>
+        <a id="importCommandsBtn" class="btn-floating red">
+          <i class="material-icons">file_upload</i>
+        </a>
+      </li>
+      <li>
+        <a id="exportCommandsBtn" class="btn-floating yellow darken-1" onclick="toXml()">
+          <i class="material-icons">save</i>
+        </a>
+      </li>
+      <li>
+        <a id="submitCommandsBtn" class="btn-floating green" onclick="toCode('JavaScript')">
+          <i class="material-icons">send</i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
   <div id="blocklyDiv"></div>
 
   <xml xmlns="http://www.w3.org/1999/xhtml" id="toolbox" style="display: none;">
