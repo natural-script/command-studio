@@ -487,7 +487,7 @@ Blockly.Blocks['command'] = {
 				if (i == 0) {
 					this.appendDummyInput()
 						.appendField("Command")
-						.appendField(new Blockly.FieldTextInput("c0"), "command_id");
+						.appendField(new Blockly.FieldTextInput("S6"), "command_id");
 					this.appendDummyInput()
 						.appendField("Language")
 						.appendField(new Blockly.FieldDropdown([
