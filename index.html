@@ -61,7 +61,7 @@
       });
       window.editor = new JSONEditor(document.getElementById('jsoneditor'));
       $.ajax({
-        url: 'https://rawgit.com/project-jste/framework/master/src/JS/Translations/words.json',
+        url: 'https://rawgit.com/project-jste/framework/master/src/JS/Translations/dictionary.json',
         dataType: 'json',
         async: false,
         success: function (json) {
@@ -195,7 +195,7 @@
       console.log(generatedCode);
       $.ajax({
         method: 'POST',
-        url: 'https://jste-manager.herokuapp.com/submitCommand',
+        url: 'https://jste-manager.azurewebsites.net/submitCommand',
         data: {
           type: 'command',
           command: generatedCode
@@ -206,7 +206,7 @@
     function submitWordsDB(lang) {
       $.ajax({
         method: 'POST',
-        url: 'https://jste-manager.herokuapp.com/submitCommand',
+        url: 'https://jste-manager.azurewebsites.net/submitCommand',
         data: {
           type: 'wordsDB',
           DB: editor.getText()
