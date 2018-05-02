@@ -494,7 +494,10 @@ Blockly.Blocks['command'] = {
 							["English", "en"],
 							["French", "fr"],
 							["Arabic", "ar"],
-							["Egyptian", "arz"]
+							["Egyptian", "arz"],
+							["Japanese", "ja"],
+							["Chinese", "zh"],
+							["Hindi", "hi"]
 						]), "Language");
 					this.appendDummyInput()
 						.appendField("Example")

@@ -49,6 +49,10 @@
 
     function start() {
       $('#jsonEditorModal').iziModal();
+      if (!(localStorage.contributer && localStorage.email)) {
+        localStorage.contributer = prompt("Please enter your name");
+        localStorage.email = prompt("Please enter your email");
+      }
       var elem = document.querySelector('.commandsFAB');
       var commandsFABInstance = M.FloatingActionButton.init(elem, {
         direction: 'left',
@@ -76,6 +80,10 @@
       };
       $('#openWordsDBEditorBtn').on('click', function () {
         $('#jsonEditorModal').iziModal('open');
+      });
+      $('#modifyContributerInfoBtn').on('click', function () {
+        localStorage.contributer = prompt("Please enter your name");
+        localStorage.email = prompt("Please enter your email");
       });
       $("#importCommandsFile").fileReaderJS({
         readAsDefault: 'Text',
@@ -188,27 +196,30 @@
       Blockly.Xml.domToWorkspace(xml, workspace);
     }
 
-
     function toCode(lang) {
       var output = document.getElementById('importExport');
       var generatedCode = Blockly[lang].workspaceToCode(workspace);
       console.log(generatedCode);
       $.ajax({
         method: 'POST',
-        url: 'https://jste-manager.azurewebsites.net/submitCommand',
+        url: 'https://jste-manager.herokuapp.com/submitCommand',
         data: {
           type: 'command',
+          contributer: localStorage.contributer,
+          email: localStorage.email,
           command: generatedCode
         }
       });
     }
 
-    function submitWordsDB(lang) {
+    function submitWordsDB() {
       $.ajax({
         method: 'POST',
-        url: 'https://jste-manager.azurewebsites.net/submitCommand',
+        url: 'https://jste-manager.herokuapp.com/submitCommand',
         data: {
-          type: 'wordsDB',
+          type: 'dictionary',
+          contributer: localStorage.contributer,
+          email: localStorage.email,
           DB: editor.getText()
         }
       });
@@ -425,22 +436,27 @@
         <a id="openWordsDBEditorBtn" class="btn-floating blue pulse">
           <i class="material-icons">translate</i>
         </a>
+      </li>
+        <li>
+          <a id="modifyContributerInfoBtn" class="btn-floating orange">
+            <i class="material-icons">account_circle</i>
+          </a>
         </li>
         <li>
-        <a id="importCommandsBtn" class="btn-floating red">
-          <i class="material-icons">file_upload</i>
-        </a>
-      </li>
-      <li>
-        <a id="exportCommandsBtn" class="btn-floating yellow darken-1" onclick="toXml()">
-          <i class="material-icons">save</i>
-        </a>
-      </li>
-      <li>
-        <a id="submitCommandsBtn" class="btn-floating green" onclick="toCode('JavaScript')">
-          <i class="material-icons">send</i>
-        </a>
-      </li>
+          <a id="importCommandsBtn" class="btn-floating red">
+            <i class="material-icons">file_upload</i>
+          </a>
+        </li>
+        <li>
+          <a id="exportCommandsBtn" class="btn-floating yellow darken-1" onclick="toXml()">
+            <i class="material-icons">save</i>
+          </a>
+        </li>
+        <li>
+          <a id="submitCommandsBtn" class="btn-floating green" onclick="toCode('JavaScript')">
+            <i class="material-icons">send</i>
+          </a>
+        </li>
     </ul>
   </div>
 
