@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="assets/CSS/please-wait.css">
   <script src="assets/JS/jquery-3.2.1.min.js"></script>
   <script src="assets/JS/jquery-migrate-3.0.0.min.js"></script>
+  <script src="assets/JS/tippy.all.min.js"></script>
   <script>
     $(window).ready(function () {
       window.loading_screen = window.pleaseWait({
@@ -24,7 +25,13 @@
       });
     });
     $(document).ready(function () {
-      window.loading_screen.finish();
+      var dictStatusChecker = setInterval(function () {
+        if ($(".iziModal-content").length > 0) { // Check if element has been found
+          window.loading_screen.finish();
+          tippy('[title]');
+          clearInterval(dictStatusChecker);
+        }
+      }, 500);
     });
   </script>
   <script src="assets/JS/materialize.js"></script>
@@ -399,26 +406,26 @@
 </head>
 
 <body onload="start();">
-  <div id="jsonEditorModal" data-iziModal-title="Contribute To The Words Translations DB">
+  <div id="jsonEditorModal" data-iziModal-title="Contribute To Jste Dictionary With More Translations">
     <input type="file" accept=".json" id="importWordsDBFile" />
     <div id="jsoneditor">
       <div class="fixed-action-btn wordsDBFAB">
-        <a class="btn-floating btn-large red">
-          <i class="large material-icons">mode_edit</i>
+        <a class="btn-floating btn-large red" title="Options">
+          <i class="large material-icons">reorder</i>
         </a>
         <ul>
           <li>
-            <a id="importWordsDBBtn" class="btn-floating red">
-              <i class="material-icons">file_upload</i>
+            <a id="importWordsDBBtn" class="btn-floating red" title="Open">
+              <i class="material-icons">insert_drive_file</i>
             </a>
           </li>
           <li>
-            <a id="exportWordsDBBtn" class="btn-floating yellow darken-1" onclick="exportWordsDB()">
+            <a id="exportWordsDBBtn" class="btn-floating yellow darken-1" onclick="exportWordsDB()" title="Save">
               <i class="material-icons">save</i>
             </a>
           </li>
           <li>
-            <a id="submitWordsDBBtn" class="btn-floating green" onclick="submitWordsDB()">
+            <a id="submitWordsDBBtn" class="btn-floating green" onclick="submitWordsDB()" title="Submit Your Contribution">
               <i class="material-icons">send</i>
             </a>
           </li>
@@ -428,35 +435,35 @@
   </div>
   <input type="file" accept=".xml" id="importCommandsFile" />
   <div class="fixed-action-btn commandsFAB">
-    <a class="btn-floating btn-large red">
-      <i class="large material-icons">mode_edit</i>
+    <a class="btn-floating btn-large red" title="Options">
+      <i class="large material-icons">reorder</i>
     </a>
     <ul>
       <li>
-        <a id="openWordsDBEditorBtn" class="btn-floating blue pulse">
+        <a id="openWordsDBEditorBtn" class="btn-floating blue pulse" title="Jste Dictionary">
           <i class="material-icons">translate</i>
         </a>
       </li>
-        <li>
-          <a id="modifyContributerInfoBtn" class="btn-floating orange">
-            <i class="material-icons">account_circle</i>
-          </a>
-        </li>
-        <li>
-          <a id="importCommandsBtn" class="btn-floating red">
-            <i class="material-icons">file_upload</i>
-          </a>
-        </li>
-        <li>
-          <a id="exportCommandsBtn" class="btn-floating yellow darken-1" onclick="toXml()">
-            <i class="material-icons">save</i>
-          </a>
-        </li>
-        <li>
-          <a id="submitCommandsBtn" class="btn-floating green" onclick="toCode('JavaScript')">
-            <i class="material-icons">send</i>
-          </a>
-        </li>
+      <li>
+        <a id="modifyContributerInfoBtn" class="btn-floating orange" title="Modify Your Personal Info">
+          <i class="material-icons">account_circle</i>
+        </a>
+      </li>
+      <li>
+        <a id="importCommandsBtn" class="btn-floating red" title="Open">
+          <i class="material-icons">insert_drive_file</i>
+        </a>
+      </li>
+      <li>
+        <a id="exportCommandsBtn" class="btn-floating yellow darken-1" onclick="toXml()" title="Save">
+          <i class="material-icons">save</i>
+        </a>
+      </li>
+      <li>
+        <a id="submitCommandsBtn" class="btn-floating green" onclick="toCode('JavaScript')" title="Submit Your Contribution">
+          <i class="material-icons">send</i>
+        </a>
+      </li>
     </ul>
   </div>
 
