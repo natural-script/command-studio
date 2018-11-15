@@ -122,17 +122,3 @@ Blockly.JavaScript['variable'] = function (block) {
 	// TODO: Change ORDER_NONE to the correct strength.
 	return [code, Blockly.JavaScript.ORDER_NONE];
 };
-Blockly.JavaScript['dynamic_data'] = function (block) {
-	var text_data_id = block.getFieldValue('data_id');
-	var checkbox_grouped = block.getFieldValue('grouped') == 'TRUE';
-	var text_separator = block.getFieldValue('separator');
-	var elements = new Array(block.itemCount_);
-	for (var i = 0; i < block.itemCount_; i++) {
-		elements[i] = Blockly.JavaScript.valueToCode(block, 'ADD' + i, Blockly.JavaScript.ORDER_NONE) || 'null';
-	}
-	var value_data = elements.join(' ');
-	// TODO: Assemble JavaScript into code variable.
-	var code = 'LOOP[[[ID(((<<<' + text_data_id + '>>>)))IS_GROUPED(((<<<' + checkbox_grouped + '>>>)))SEPARATOR(((<<<' + text_separator + '>>>)))DATA(((<<<' + value_data + '>>>)))]]]';
-	// TODO: Change ORDER_NONE to the correct strength.
-	return [code, Blockly.JavaScript.ORDER_NONE];
-};
